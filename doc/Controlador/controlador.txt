@@ -1,0 +1,66 @@
+@startuml
+class PresentacionControlador{
+-stage
+---
++iniciarJuegoKlondike()
++iniciarJuegoFreecell()
+}
+
+class PresentacionVista{
+-stage
+-controlador
+-buttons
+---
++menuPrincipal()
++crearButtonContainer()
++mostrar()
+}
+
+class JuegoControlador{
+-stage
+-modeloJuego
+-vistaJuego
+---
++iniciar()
++deseleccionarCarta()
++establerCartaSeleccionada()
++realizarCambio()
++actualizarVista()
+}
+
+class AccionesVista{
+-juegoControlador
+---
++moverACelda()
++moverAFundacion()
++moverAPilaTablero()
++actualizarStock()
+}
+
+interface Solitario {
++prepararPartidaConSemilla()
++prepararPartidaConSemilla(rnd)
++juegoGanado()
++obtenerCartasTotales()
++moverUniversal()
+}
+
+interface Vista {
++mostrarJuego()
++setOnClose()
++borrarPartida()
++mostrarPartidaGanada()
++actualizarVista()
++obtenerOutputStreamGuardado()
+}
+
+PresentacionControlador --.> JuegoControlador
+PresentacionControlador --.> PresentacionVista
+PresentacionControlador --.> Solitario
+PresentacionControlador --.> Vista
+PresentacionControlador --.> AccionesVista
+JuegoControlador *-- Solitario
+JuegoControlador *-- Vista
+
+
+@enduml

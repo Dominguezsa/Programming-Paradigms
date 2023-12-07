@@ -1,0 +1,141 @@
+@startuml
+
+
+class Carta{
+-palo
+-valor
+-color
+-visible
+--
++sonIguales(Carta)
++hacerVisible()
++hacerNoVisible()
++ConvertirACelda()
++ConvertirAFundacion()
++ConvertirATablero()
++ConvertirAStock()
+}
+
+class Mazo{
+-cartas
+--
++desordenarMazo()
++sacarCarta()
+}
+
+class Fundaciones{
+-fundaciones
+-validacion
+--
++sacarCartaFundacion()
++verPrimeraCartaFundacion()
++agregarCarta()
++moverEntreFundaciones()
+}
+
+class Tablero {
+-pilas
+-validacion
+--
++prepararPilas()
++agregarCarta()
++moverEntrePilas()
++sacarCartas()
++verCartaPos()
+}
+
+class TableroFreeCell{
+-pilas
+-validacion
+--
++prepararPilas()
++agregarCarta()
++moverEntrePilas()
++sacarCartas()
++verCartaPos()
+}
+
+class Celda {
+-celdas
+-validacion
+--
++agregarCarta()
++sacarCarta()
++moverEntreCeldas()
+}
+class JuegoFreecell{
+-tablero: TableroFreeCell
+-fundaciones: Fundaciones
+-celdas: Celda
+-juegoTerminado: bool
+--
++prepararPartidaConSemilla()
++moverStockAFundacion()
++moverStockATablero()
++moverFundacionATablero()
++moverFundacionAFundacion()
++moverTableroATablero()
++moverTableroAFundacion()
++juegoGanado()
++moverUniversal()
+}
+
+class Movimientos {
++moverStockAFundacion()
++moverStockATablero()
++moverFundacionATablero()
++moverFundacionAFundacion()
++moverTableroATablero()
++moverTableroAFundacion()
+}
+
+class Agregado {
+AgregarTableroAOtro()
+AgregarStockoAOtro()
+AgregarFundacionAOtro()
+}
+
+interface ReceptorDeCartas{
++agregarCarta()
+}
+
+interface Solitario {
++prepararPartidaConSemilla()
++prepararPartidaConSemilla(rnd)
++juegoGanado()
++obtenerCartasTotales()
++moverUniversal()
+}
+
+class ValidacionesFreecell {
++validarCartaParaTablero()
++validarCartaParaFundacion()
++validarCartaParaCelda()
++ValidarMoverEntrePilas()
+-obtenerCartasMover()
+}
+
+
+TableroFreeCell --|> Tablero
+
+Tablero o--> Carta
+Fundaciones o--> Carta
+Mazo o-->  Carta
+Celda o--> Carta
+
+Tablero o--> ValidacionesFreecell
+Fundaciones o-->ValidacionesFreecell
+Celda o--> ValidacionesFreecell
+
+Movimientos ..> Agregado
+Agregado ..> ReceptorDeCartas
+
+JuegoFreecell *--> Celda
+JuegoFreecell *--> Fundaciones
+JuegoFreecell *--> TableroFreeCell
+JuegoFreecell ..> Mazo
+JuegoFreecell ..> Movimientos
+
+JuegoFreecell ..|> Solitario
+
+@enduml

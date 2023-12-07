@@ -1,0 +1,139 @@
+@startuml
+
+
+class Carta{
+-palo
+-valor
+-color
+-visible
+--
++sonIguales(Carta)
++hacerVisible()
++hacerNoVisible()
++ConvertirACelda()
++ConvertirAFundacion()
++ConvertirATablero()
++ConvertirAStock()
+}
+
+class Mazo{
+-cartas
+--
++desordenarMazo()
++sacarCarta()
+}
+
+class Fundaciones{
+-fundaciones
++sacarCartaFundacion()
++verPrimeraCartaFundacion()
++agregarCarta()
++moverEntreFundaciones()
+}
+
+class Stock {
+-stockNovisible
+--
++pasarTandaStock()
++prepararStock()
++verPrimeraCarta()
+}
+class StockKlondike{
+-stockNovisible
+-cartasVisibles
+--
++pasarTandaStock()
++prepararStock()
++sacarCarta()
++verPrimeraCarta()
+}
+
+class Tablero {
+-pilas
+--
++prepararPilas()
++agregarCarta(carta,pos)
++moverEntrePilas()
++sacarCartas(posPila,posCarta )
++verCartaPos(posPila,posCarta)
+}
+
+class TableroKlondike{
+-pilas
+--
++prepararPilas()
++agregarCarta()
++moverEntrePilas()
++sacarCartas()
++verCartaPos()
+}
+
+class JuegoKlondike{
+-stock: StockKlondike
+-pilasCartas: TableroKlondike
+-fundaciones: Fundaciones
+-juegoTerminado: bool
+-mazo: Mazo
+--
++prepararPartidaConSemilla()
++moverStockAFundacion()
++moverStockATablero()
++moverFundacionATablero()
++moverFundacionAFundacion()
++moverTableroATablero()
++moverTableroAFundacion()
++juegoGanado()
++moverUniversal()
+}
+
+class Movimientos {
++moverStockAFundacion()
++moverStockATablero()
++moverFundacionATablero()
++moverFundacionAFundacion()
++moverTableroATablero()
++moverTableroAFundacion()
+}
+
+class Agregado {
+AgregarTableroAOtro()
+AgregarStockoAOtro()
+AgregarFundacionAOtro()
+}
+
+interface ReceptorDeCartas{
++agregarCarta()
+}
+
+interface Solitario {
++prepararPartidaConSemilla()
++prepararPartidaConSemilla(rnd)
++juegoGanado()
++obtenerCartasTotales()
++moverUniversal()
+}
+
+class ValidacionesKlondike {
++validarCartaParaTablero()
++validarCartaParaFundacion()
+}
+
+StockKlondike --|> Stock
+TableroKlondike --|> Tablero
+Fundaciones o--> Carta
+StockKlondike o--> Carta
+TableroKlondike o-->  Carta
+Mazo o-->  Carta
+Movimientos ..> Agregado
+Agregado ..> ReceptorDeCartas
+Fundaciones ..|> ReceptorDeCartas
+Tablero ..|> ReceptorDeCartas
+JuegoKlondike *--> Fundaciones
+JuegoKlondike *--> StockKlondike
+JuegoKlondike *--> TableroKlondike
+JuegoKlondike ..> Mazo
+JuegoKlondike ..> Movimientos
+JuegoKlondike ..> ValidacionesKlondike
+
+JuegoKlondike ..|> Solitario
+@enduml

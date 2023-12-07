@@ -1,0 +1,124 @@
+@startuml
+
+class JuegoVista{
+-stage
+-root
+-accionesVista
+---
++setOnClose()
++borrarPartida()
++mostrarPartidaGanada()
++obtenerOutputStreamGuardado()
++obtenerInputStreamGuardado()
+}
+
+class AccionesVista{
+-juegoControlador
+---
++moverACelda()
++moverAFundacion()
++moverAPilaTablero()
++actualizarStock()
+}
+
+class KlondikeVista{
+-stage
+-root
+-vistaStock
+-vistaTablero
+-vistaFundacion
+---
++mostrarJuego()
++setOnClose()
++borrarPartida()
++mostrarPartidaGanada()
++actualizarVista()
++obtenerOutputStreamGuardado()
+++obtenerInputStreamGuardado()
+}
+class FreecellVista{
+-stage
+-root
+-vistaCelda
+-vistaTablero
+-vistaFundacion
+---
++mostrarJuego()
++setOnClose()
++borrarPartida()
++mostrarPartidaGanada()
++actualizarVista()
++obtenerOutputStreamGuardado()
+++obtenerInputStreamGuardado()
+}
+
+interface Vista {
++mostrarJuego()
++setOnClose()
++borrarPartida()
++mostrarPartidaGanada()
++actualizarVista()
++obtenerOutputStreamGuardado()
+}
+
+class CartaVista {
++ObtenerUbicacionCarta()
++AplicarFiltro()
++DesaplicarFiltro()
+}
+
+class CeldaVista{
+-celdaModelo
+-juegoControlador
+---
++establecerCeldaBox()
+}
+
+class FundacionVista{
+-fundacionModelo
+-juegoControlador
+---
++establecerFundacionesBox()
+}
+
+
+class TableroVista{
+-tableroModelo
+-juegoControlador
+---
++establecerTableroBox()
++clearTablero()
+}
+
+class StockVista{
+-stockModelo
+-imgViewCartasVisibles
+-imgViewCartasNoVisibles
+-juegoControlador
+---
++establecerStockBox()
+}
+
+Vista <|.. JuegoVista
+
+JuegoVista <|-- KlondikeVista
+JuegoVista <|-- FreecellVista
+JuegoVista *-- AccionesVista
+
+CeldaVista ..> CartaVista
+StockVista ..> CartaVista
+FundacionVista ..> CartaVista
+TableroVista ..> CartaVista
+
+KlondikeVista *-- TableroVista
+KlondikeVista *-- StockVista
+KlondikeVista *-- FundacionVista
+
+FreecellVista *-- TableroVista
+FreecellVista *-- CeldaVista
+FreecellVista *-- FundacionVista
+
+
+
+
+@enduml
