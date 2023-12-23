@@ -1,10 +1,12 @@
 # Solitaire Game Project
 
 ## Overview
-
+<p align="justify">
 This repository contains the main project developed in the subject "Programming Paradigms" at the Faculty of Engineering, University of Buenos Aires (UBA). The aim of this project is to create a video game that provides players with the opportunity to experience various solitaire variations. By the end of the development process, users will be able to engage in at least two distinct solitaire variants.
 
 ## Key Concepts Explored
+
+<div style="text-align: justify;">
 
 Throughout the development of this project, we explored several key concepts within the realm of programming paradigms. These concepts include:
 
@@ -16,11 +18,12 @@ Throughout the development of this project, we explored several key concepts wit
 
 - **Graphic Interfaces:** The game features a graphical user interface (GUI) to enhance the user experience, and the development process includes considerations for effective UI/UX design.
 
-
+</div>
 
 ## Images
+
 <p align="center">
-  <img src="Images/Presentacion.png" alt="Presentation">
+  <img src="Images/Presentation.png" alt="Presentation">
   <br>
   <em>Image of the program presentation.</em>
 </p>
