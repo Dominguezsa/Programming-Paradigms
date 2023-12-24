@@ -1,4 +1,4 @@
-package ObjetosPrincipalesTest;
+package MainObjectsTest;
 
 
 import Model.Global.Constants.Klondlike;

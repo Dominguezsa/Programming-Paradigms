@@ -1,4 +1,4 @@
-package ObjetosPrincipalesTest;
+package MainObjectsTest;
 
 import Model.Global.MainObjects.Universal.Card;
 import Model.Global.MainObjects.Universal.Persistence;
