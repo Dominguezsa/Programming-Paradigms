@@ -1,10 +1,10 @@
 package KlondikeTest;
 
-import Modelo.Global.Constantes.Generales;
-import Modelo.Global.Constantes.Palos;
-import Modelo.Global.Constantes.Valores;
-import Modelo.Global.ObjetosPrincipales.Universales.Carta;
-import Modelo.SolitarioKlondlike.ObjetosConcretos.StockKlondike;
+import Model.Global.Constants.General;
+import Model.Global.Constants.Suits;
+import Model.Global.Constants.Values;
+import Model.Global.MainObjects.Universal.Card;
+import Model.KlondikeSolitaire.ConcreteObjects.StockKlondike;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,164 +16,164 @@ import static org.junit.Assert.*;
 
 public class StockKlondikeTest {
     private StockKlondike stock;
-    private Carta asDiamante;
-    private Carta dosDiamante;
-    private Carta tresPica;
-    private Carta asCorazon;
+    private Card asDiamante;
+    private Card dosDiamante;
+    private Card tresPica;
+    private Card asCorazon;
 
     @Before
     public void setUp() {
         stock = new StockKlondike();
-        ArrayList<Carta> Visibles = new ArrayList<Carta>();
-        Stack<Carta> NoVisible = new Stack<>();
-        asDiamante = new Carta(Valores.AS, Palos.DIAMANTE);
-        dosDiamante = new Carta(Valores.DOS, Palos.DIAMANTE);
-        tresPica = new Carta(Valores.TRES, Palos.PICA);
-        asCorazon = new Carta(Valores.AS, Palos.CORAZON);
+        ArrayList<Card> Visibles = new ArrayList<Card>();
+        Stack<Card> NoVisible = new Stack<>();
+        asDiamante = new Card(Values.ACE, Suits.DIAMOND);
+        dosDiamante = new Card(Values.TWO, Suits.DIAMOND);
+        tresPica = new Card(Values.THREE, Suits.SPADE);
+        asCorazon = new Card(Values.ACE, Suits.HEART);
         NoVisible.add(asDiamante);
         NoVisible.add(dosDiamante);
         NoVisible.add(tresPica);
         NoVisible.add(asCorazon);
-        stock.prepararStockEspecifico(NoVisible,Visibles);
+        stock.prepareSpecificStock(NoVisible,Visibles);
     }
 
     @Test
     public void testPrepararStock() {
-        assertEquals(4, stock.cartasTotales());
-        assertNull(stock.verPrimerCarta());
+        assertEquals(4, stock.totalCards());
+        assertNull(stock.seeFirstCard());
     }
 
     @Test
     public void testPasarTandaStock() {
-        stock.pasarTandaStock();
-        assertNotNull(stock.verPrimerCarta());
+        stock.moveCard();
+        assertNotNull(stock.seeFirstCard());
     }
 
     @Test
     public void testSacarCarta() {
-        stock.pasarTandaStock();
-        Carta cartaSacada = stock.sacarCarta();
-        assertNotNull(cartaSacada);
-        assertEquals(asCorazon, cartaSacada);
+        stock.moveCard();
+        Card cardSacada = stock.drawACard();
+        assertNotNull(cardSacada);
+        assertEquals(asCorazon, cardSacada);
     }
     @Test
     public void sacarCartas() {
         //se evalua que funciona pasarStock() y cantidad()
-        Carta carta = stock.sacarCarta();
-        assertNull(carta);
-        assertEquals(4,stock.cartasTotales());
-        stock.pasarTandaStock();
-        carta = stock.sacarCarta();
-        assertEquals(3,stock.cartasTotales());
-        assertEquals(asCorazon,carta);
-        assertTrue(carta.esVisible());
-        stock.pasarTandaStock();
-        carta = stock.sacarCarta();
-        assertEquals(2,stock.cartasTotales());
-        assertEquals(tresPica,carta);
-        assertTrue(carta.esVisible());
-        stock.pasarTandaStock();
-        carta = stock.sacarCarta();
-        assertEquals(1,stock.cartasTotales());
-        assertEquals(dosDiamante,carta);
-        assertTrue(carta.esVisible());
-        stock.pasarTandaStock();
-        carta = stock.sacarCarta();
-        assertEquals(0,stock.cartasTotales());
-        assertEquals(asDiamante,carta);
-        assertTrue(carta.esVisible());
+        Card card = stock.drawACard();
+        assertNull(card);
+        assertEquals(4,stock.totalCards());
+        stock.moveCard();
+        card = stock.drawACard();
+        assertEquals(3,stock.totalCards());
+        assertEquals(asCorazon, card);
+        assertTrue(card.isVisible());
+        stock.moveCard();
+        card = stock.drawACard();
+        assertEquals(2,stock.totalCards());
+        assertEquals(tresPica, card);
+        assertTrue(card.isVisible());
+        stock.moveCard();
+        card = stock.drawACard();
+        assertEquals(1,stock.totalCards());
+        assertEquals(dosDiamante, card);
+        assertTrue(card.isVisible());
+        stock.moveCard();
+        card = stock.drawACard();
+        assertEquals(0,stock.totalCards());
+        assertEquals(asDiamante, card);
+        assertTrue(card.isVisible());
     }
     @Test
     public void stockVacio(){
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
+        stock.moveCard();
+        stock.moveCard();
+        stock.moveCard();
+        stock.moveCard();
 
-        stock.sacarCarta();
-        stock.sacarCarta();
-        stock.sacarCarta();
-        stock.sacarCarta();
+        stock.drawACard();
+        stock.drawACard();
+        stock.drawACard();
+        stock.drawACard();
 
-        assertEquals(Generales.STOCKVACIO,stock.cartasTotales());
-        assertNull(stock.sacarCarta());
+        assertEquals(General.EMPTY,stock.totalCards());
+        assertNull(stock.drawACard());
     }
     @Test
     public void verPrimeraCarta() {
-        Carta carta = stock.sacarCarta();
-        assertNull(carta);
-        stock.pasarTandaStock();
-        carta = stock.verPrimerCarta();
-        assertEquals(asCorazon,carta);
-        assertTrue(carta.esVisible());
-        stock.sacarCarta();
-        carta = stock.verPrimerCarta();
-        assertNull(carta);
+        Card card = stock.drawACard();
+        assertNull(card);
+        stock.moveCard();
+        card = stock.seeFirstCard();
+        assertEquals(asCorazon, card);
+        assertTrue(card.isVisible());
+        stock.drawACard();
+        card = stock.seeFirstCard();
+        assertNull(card);
     }
 
     @Test
     public void SeRespetanVisibilidades() {
-        List<Carta> visibles = stock.obtenerCartasVisibles();
-        Stack<Carta> noVisible = stock.obtenerStockNoVisible();
+        List<Card> visibles = stock.getVisibleStock();
+        Stack<Card> noVisible = stock.getNonVisibleStock();
         assertEquals(0, visibles.size());
         assertEquals(4, noVisible.size());
-        for (Carta carta : noVisible) {
-            assertFalse(carta.esVisible());
+        for (Card card : noVisible) {
+            assertFalse(card.isVisible());
         }
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
+        stock.moveCard();
+        stock.moveCard();
         assertEquals(2,visibles.size());
         assertEquals(2,noVisible.size());
-        for (Carta carta : visibles) {
-            assertTrue(carta.esVisible());
+        for (Card card : visibles) {
+            assertTrue(card.isVisible());
         }
-        for (Carta carta : noVisible) {
-            assertFalse(carta.esVisible());
+        for (Card card : noVisible) {
+            assertFalse(card.isVisible());
         }
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
+        stock.moveCard();
+        stock.moveCard();
         assertEquals(4, visibles.size());
         assertEquals(0, noVisible.size());
         //La cuarta carta no deberia ser visible, se evalua.
         for(int i=0;i<4;i++){
-            assertTrue(visibles.get(i).esVisible());
+            assertTrue(visibles.get(i).isVisible());
         }
     }
 
     @Test
     public void testSePasaPorTodasLasCartas(){
 
-        List<Carta> visibles = stock.obtenerCartasVisibles();
-        Stack<Carta> noVisible = stock.obtenerStockNoVisible();
+        List<Card> visibles = stock.getVisibleStock();
+        Stack<Card> noVisible = stock.getNonVisibleStock();
         //Paso las 4 cuartas a la parte visible
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
-        stock.pasarTandaStock();
+        stock.moveCard();
+        stock.moveCard();
+        stock.moveCard();
+        stock.moveCard();
         //Vuelven a ser todas NoVisibles
-        stock.pasarTandaStock();
+        stock.moveCard();
         //Voy sacando y reviso que esten en orden, con la visibilidad correcta.
-        stock.pasarTandaStock();
+        stock.moveCard();
         assertEquals(3,noVisible.size());
         assertEquals(1,visibles.size());
         assertEquals(asCorazon,visibles.get(visibles.size()-1));
-        assertTrue(asCorazon.esVisible());
+        assertTrue(asCorazon.isVisible());
 
-        stock.pasarTandaStock();
+        stock.moveCard();
         assertEquals(tresPica,visibles.get(visibles.size()-1));
-        assertTrue(tresPica.esVisible());
+        assertTrue(tresPica.isVisible());
         assertEquals(2,noVisible.size());
         assertEquals(2,visibles.size());
 
-        stock.pasarTandaStock();
+        stock.moveCard();
         assertEquals(dosDiamante,visibles.get(visibles.size()-1));
-        assertTrue(dosDiamante.esVisible());
+        assertTrue(dosDiamante.isVisible());
         assertEquals(1,noVisible.size());
         assertEquals(3,visibles.size());
 
-        stock.pasarTandaStock();
+        stock.moveCard();
         assertEquals(asDiamante,visibles.get(visibles.size()-1));
-        assertTrue(asDiamante.esVisible());
+        assertTrue(asDiamante.isVisible());
         assertEquals(0,noVisible.size());
         assertEquals(4,visibles.size());
     }

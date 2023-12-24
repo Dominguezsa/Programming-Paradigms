@@ -1,13 +1,13 @@
 package FreeCellTest;
 
-import Modelo.Global.Constantes.*;
-import Modelo.Global.ObjetosPrincipales.Abstactos.Tablero;
-import Modelo.Global.ObjetosPrincipales.Concretos.Celda;
-import Modelo.Global.ObjetosPrincipales.Concretos.Fundacion;
-import Modelo.Global.ObjetosPrincipales.Universales.Carta;
-import Modelo.Global.ObjetosPrincipales.Universales.Mazo;
-import Modelo.SolitarioFreeCell.JuegoFreeCell;
-import Modelo.SolitarioFreeCell.ObjetosConcretos.TableroFreeCell;
+import Model.Global.Constants.*;
+import Model.Global.MainObjects.Abstract.Tableau;
+import Model.Global.MainObjects.Concrete.Cell;
+import Model.Global.MainObjects.Concrete.Foundation;
+import Model.Global.MainObjects.Universal.Card;
+import Model.Global.MainObjects.Universal.Deck;
+import Model.FreeCellSolitaire.FreeCellGame;
+import Model.FreeCellSolitaire.ConcreteObjects.FreeCellTableau;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,70 +18,70 @@ import static org.junit.Assert.*;
 
 
 public class FreeCellTest {
-    private JuegoFreeCell juego;
+    private FreeCellGame juego;
 
     @Before
     public void setUp() {
-        juego = new JuegoFreeCell();
+        juego = new FreeCellGame();
     }
 
     @Test
     public void testCrearJuego() {
         //se testea partida vacia
-        assertEquals(Generales.MAZOVACIO, juego.obtenerCartasTotales());
+        assertEquals(General.EMPTY, juego.countAllCards());
 
-        Fundacion f = juego.obtenerFundacion();
-        for (int i = 0; i < Klondlike.FUNDACIONES; i++) {
-            assertEquals(Generales.FUNDACIONVACIA, f.cantCartas(i));
+        Foundation f = juego.getFoundations();
+        for (int i = 0; i < Klondlike.FOUNDATIONS; i++) {
+            assertEquals(General.EMPTY, f.cardsInColumn(i));
         }
-        Tablero t = juego.obtenerTablero();
-        for (int i = 0; i < Klondlike.PILASCARTAS; i++) {
-            assertEquals(Generales.PILAVACIA, t.cantCartas(i));
+        Tableau t = juego.getTableau();
+        for (int i = 0; i < Klondlike.INITIALTABLEAUCOLUMNS; i++) {
+            assertEquals(General.EMPTY, t.cardsInStack(i));
         }
-        assertTrue(juego.obtenerJuegoTerminado());
+        assertTrue(juego.isGameOver());
 
     }
 
     @Test
     public void testEstadoInicialPartida(){
-        juego.prepararPartidaAleatoria();
-        assertEquals(Generales.MAZOCOMPLETO, juego.obtenerCartasTotales());
-        assertFalse(juego.obtenerJuegoTerminado());
-        assertFalse(juego.esJuegoGanado());
+        juego.prepareRandomGame();
+        assertEquals(General.COMPLETEDDECK, juego.countAllCards());
+        assertFalse(juego.isGameOver());
+        assertFalse(juego.gameFinished());
     }
 
     @Test
     public void testPrepararPartida(){
-        juego.prepararPartidaAleatoria();
-        Fundacion f = juego.obtenerFundacion();
-        Celda c = juego.obtenerCeldas();
-        TableroFreeCell t = juego.obtenerTablero();
+        juego.prepareRandomGame();
+        Foundation f = juego.getFoundations();
+        Cell c = juego.getCells();
+        FreeCellTableau t = juego.getTableau();
 
-        for (Carta carta:c.getCeldas()){
-            assertNull(carta);
+        for (Card card :c.getCells()){
+            assertNull(card);
         }
-        for (ArrayList<Carta> fund:f.obtenerFundaciones()){
+        for (ArrayList<Card> fund:f.getFoundations()){
             assertTrue(fund.isEmpty());
         }
-        ArrayList<Carta> pila;
-        for (int i = 0; i<= Freecell.TOPEPILASPRIMERAS; i++){
-            pila = t.obtenerPila(i);
-            assertEquals(Freecell.CARTASPILASPRIMERAS,pila.size());
+        ArrayList<Card> pila;
+        for (int i = 0; i<= Freecell.MAXFIRSTSTACKS; i++){
+            pila = t.getStack(i);
+            assertEquals(Freecell.FIRSTSTACKS,pila.size());
         }
-        for (int i=Freecell.TOPEPILASPRIMERAS+1;i<=Freecell.TOPEPILASSEGUNDAS;i++){
-            pila = t.obtenerPila(i);
-            assertEquals(Freecell.CARTASPILASSEGUNDAS,pila.size());
+        for (int i = Freecell.MAXFIRSTSTACKS +1; i<=Freecell.MAXSECONDSTACKS; i++){
+            pila = t.getStack(i);
+            assertEquals(Freecell.SECONDSTACKS,pila.size());
         }
     }
 
     @Test
     public void testConSemilla() {
         Random rnd = new Random(1);
-        juego.prepararPartidaConSemilla(rnd);
-        Fundacion f = juego.obtenerFundacion();
-        TableroFreeCell t = juego.obtenerTablero();
-        Celda c = juego.obtenerCeldas();
-        Mazo m = new Mazo();
+        juego.prepareGameWithSeed(rnd);
+        Foundation f = juego.getFoundations();
+        FreeCellTableau t = juego.getTableau();
+        Cell c = juego.getCells();
+        Deck m = new Deck();
 
         /*
         0-[[V-CINCO-DIAMANTE, V-JOTA-PICA, V-NUEVE-CORAZON, V-AS-PICA, V-DOS-DIAMANTE, V-REY-PICA, V-CINCO-PICA],
@@ -93,53 +93,50 @@ public class FreeCellTest {
         6-[V-AS-CORAZON, V-DIEZ-PICA, V-DOS-CORAZON, V-REY-DIAMANTE, V-OCHO-TREBOL, V-REINA-DIAMANTE],
         7-[V-CUATRO-TREBOL, V-TRES-TREBOL, V-SIETE-TREBOL, V-CUATRO-DIAMANTE, V-AS-TREBOL, V-SEIS-CORAZON]]*/
         //Notacion: inicial objeto|n°pila|-|n°carta| a |inicial objeto|n°pila|-|n°carta
-        assertTrue(juego.moverTableroATablero(0,6,1));//T0-5Pica a T1-6Diam
-        assertTrue(juego.moverTableroACelda(7,5,0)); //T7-6cora a C0-vacia
-        juego.moverTableroAFundacion(7,4,1);//T7-1treb a F1-fund
+        assertTrue(juego.moveTableauToTableau(0,6,1));//T0-5Pica a T1-6Diam
+        assertTrue(juego.moveTableauToCell(7,5,0)); //T7-6cora a C0-vacia
+        juego.moveTableauToFoundation(7,4,1);//T7-1treb a F1-fund
 
-        juego.moverTableroATablero(7,3,3);//T7-4diam a T1-5treb
-        juego.moverTableroATablero(7,2,2);//T7-7treb a T2-8Cora
-        juego.moverTableroACelda(7,1,0);//T7-3treb a C0-6cora - no se puede
-        juego.moverTableroACelda(7,1,1);//T7-3treb a C1-vacia
-        juego.moverTableroACelda(7,0,2);//T7-4treb a C2-vacia
+        juego.moveTableauToTableau(7,3,3);//T7-4diam a T1-5treb
+        juego.moveTableauToTableau(7,2,2);//T7-7treb a T2-8Cora
+        juego.moveTableauToCell(7,1,0);//T7-3treb a C0-6cora - no se puede
+        juego.moveTableauToCell(7,1,1);//T7-3treb a C1-vacia
+        juego.moveTableauToCell(7,0,2);//T7-4treb a C2-vacia
 
-        assertEquals(3,c.cartasTotales());
-        assertEquals(Generales.PILAVACIA,t.obtenerPila(7).size());
-        assertTrue(m.verCarta(Palos.PICA, Valores.REY).sonIguales(t.verCartaPos(0,5)));
-        assertEquals(Generales.PILAVACIA,t.cantCartas(7));
-        assertEquals(1,f.cartasTotales());
-        assertTrue(juego.moverCeldaATablero(1,3));//C1-3treb a T1-4diam
-        assertEquals(Generales.CELDAVACIA,c.verCarta(1));
-        assertTrue(juego.moverTableroATablero(3,7,1));//T4-diam a T1-5Pica
-        assertEquals(7,t.cantCartas(3));
-        assertEquals(10,t.cantCartas(1));
-        juego.moverCeldaATablero(0,2);//C0-6cora a T2-7treb
-        juego.moverTableroACelda(0,5,0);//T0-13Pica a C0-vacio
-        juego.moverTableroATablero(0,4,1);//T0-2Diam a T1-3treb
-        assertFalse(juego.moverTableroAFundacion(0,3,1));//T0-1Pica a F1-1Treb - no se puede
-        juego.moverTableroAFundacion(0,3,0);//T0-1Pica a F0-vacio
-        assertEquals(Generales.PILAVACIA,t.cantCartas(7));
-        assertFalse(juego.moverTableroATablero(1,6,7));//T1-6Diam a T7-vacio - muevo 5 cartas. No se puede.
+        assertEquals(3,c.totalCard());
+        assertEquals(General.EMPTY,t.getStack(7).size());
+        assertEquals(General.EMPTY,t.cardsInStack(7));
+        assertEquals(1,f.totalCards());
+        assertTrue(juego.moverCellToTableau(1,3));//C1-3treb a T1-4diam
+        assertEquals(General.EMPTYCELL,c.seeCard(1));
+        assertTrue(juego.moveTableauToTableau(3,7,1));//T4-diam a T1-5Pica
+        assertEquals(7,t.cardsInStack(3));
+        assertEquals(10,t.cardsInStack(1));
+        juego.moverCellToTableau(0,2);//C0-6cora a T2-7treb
+        juego.moveTableauToCell(0,5,0);//T0-13Pica a C0-vacio
+        juego.moveTableauToTableau(0,4,1);//T0-2Diam a T1-3treb
+        assertFalse(juego.moveTableauToFoundation(0,3,1));//T0-1Pica a F1-1Treb - no se puede
+        juego.moveTableauToFoundation(0,3,0);//T0-1Pica a F0-vacio
+        assertEquals(General.EMPTY,t.cardsInStack(7));
+        assertFalse(juego.moveTableauToTableau(1,6,7));//T1-6Diam a T7-vacio - muevo 5 cartas. No se puede.
         // tengo 2 celdas vacias nada mas, por lo que son (1 + 2) * 2 ** (0) = 3. No cuenta la pila vacia ya que ahi es justamente donde estoy moviendo las cartas.
-        assertEquals(Generales.PILAVACIA,t.cantCartas(7));
-        juego.moverCeldaACelda(0,3);//C0-13pica a C3-vacio
-        juego.moverCeldaATablero(3,7);//C3-13pica a T7-vacio
-        juego.moverTableroATablero(6,5,7);//T6-12diam a T7-13pica
-        juego.moverTableroATablero(3,6,2);//T3-5Treb a T2-6cora
-        juego.moverTableroATablero(3,5,7);//T3-11treb a T7-12Diam
-        assertTrue(m.verCarta(Palos.TREBOL,Valores.JOTA).sonIguales(t.verCartaPos(7,2)));
-        juego.moverTableroATablero(5,5,3);//T5-12Pica a T3-13Cora
-        assertTrue(juego.moverTableroATablero(0,2,5));//T0-9cora a T5-10treb
-        juego.moverTableroATablero(0,1,3);//T0-11Pica
-        juego.moverTableroACelda(6,4,0);//T6-8treb a C0-vacio
-        juego.moverTableroACelda(6,3,1);//T6-13diam a C1-vacio
-        juego.moverCeldaATablero(0,5);//C0-8treb a T5-9cora
-        juego.moverTableroACelda(6,2,0);//T6-2cora a C0-vacio
-        juego.moverTableroACelda(6,2,1);//T6-10pica a C1-vacio
-        juego.moverTableroACelda(6,1,3);//T6-1cora a F2-vacio
-        assertTrue(juego.moverTableroAFundacion(6,0,2));//C0-2cora a F2-1cora
-        assertTrue(juego.moverCeldaAFundacion(0,2));
-        assertTrue(m.verCarta(Palos.CORAZON,Valores.DOS).sonIguales(f.verPrimerCartaFundacion(2)));
+        assertEquals(General.EMPTY,t.cardsInStack(7));
+        juego.moveBetweenCells(0,3);//C0-13pica a C3-vacio
+        juego.moverCellToTableau(3,7);//C3-13pica a T7-vacio
+        juego.moveTableauToTableau(6,5,7);//T6-12diam a T7-13pica
+        juego.moveTableauToTableau(3,6,2);//T3-5Treb a T2-6cora
+        juego.moveTableauToTableau(3,5,7);//T3-11treb a T7-12Diam
+        juego.moveTableauToTableau(5,5,3);//T5-12Pica a T3-13Cora
+        assertTrue(juego.moveTableauToTableau(0,2,5));//T0-9cora a T5-10treb
+        juego.moveTableauToTableau(0,1,3);//T0-11Pica
+        juego.moveTableauToCell(6,4,0);//T6-8treb a C0-vacio
+        juego.moveTableauToCell(6,3,1);//T6-13diam a C1-vacio
+        juego.moverCellToTableau(0,5);//C0-8treb a T5-9cora
+        juego.moveTableauToCell(6,2,0);//T6-2cora a C0-vacio
+        juego.moveTableauToCell(6,2,1);//T6-10pica a C1-vacio
+        juego.moveTableauToCell(6,1,3);//T6-1cora a F2-vacio
+        assertTrue(juego.moveTableauToFoundation(6,0,2));//C0-2cora a F2-1cora
+        assertTrue(juego.moveCellToFoundation(0,2));
     }
 
 

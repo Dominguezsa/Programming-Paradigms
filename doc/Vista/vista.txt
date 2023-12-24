@@ -52,7 +52,7 @@ class FreecellVista{
 ++obtenerInputStreamGuardado()
 }
 
-interface Vista {
+interface View {
 +mostrarJuego()
 +setOnClose()
 +borrarPartida()
@@ -99,7 +99,7 @@ class StockVista{
 +establecerStockBox()
 }
 
-Vista <|.. JuegoVista
+View <|.. JuegoVista
 
 JuegoVista <|-- KlondikeVista
 JuegoVista <|-- FreecellVista

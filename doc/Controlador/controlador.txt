@@ -45,7 +45,7 @@ interface Solitario {
 +moverUniversal()
 }
 
-interface Vista {
+interface View {
 +mostrarJuego()
 +setOnClose()
 +borrarPartida()
@@ -57,10 +57,10 @@ interface Vista {
 PresentacionControlador --.> JuegoControlador
 PresentacionControlador --.> PresentacionVista
 PresentacionControlador --.> Solitario
-PresentacionControlador --.> Vista
+PresentacionControlador --.> View
 PresentacionControlador --.> AccionesVista
 JuegoControlador *-- Solitario
-JuegoControlador *-- Vista
+JuegoControlador *-- View
 
 
 @enduml

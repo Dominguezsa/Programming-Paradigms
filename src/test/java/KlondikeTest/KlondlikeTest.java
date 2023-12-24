@@ -1,18 +1,16 @@
 package KlondikeTest;
 
 
-import Modelo.Global.Constantes.Generales;
-import Modelo.Global.Constantes.Klondlike;
-import Modelo.Global.Constantes.Palos;
-import Modelo.Global.Constantes.Valores;
-import Modelo.Global.ObjetosPrincipales.Abstactos.Stock;
-import Modelo.Global.ObjetosPrincipales.Abstactos.Tablero;
-import Modelo.Global.ObjetosPrincipales.Concretos.Fundacion;
-import Modelo.Global.ObjetosPrincipales.Universales.Carta;
-import Modelo.Global.ObjetosPrincipales.Universales.Mazo;
-import Modelo.SolitarioKlondlike.JuegoKlondike;
-import Modelo.SolitarioKlondlike.ObjetosConcretos.StockKlondike;
-import Modelo.SolitarioKlondlike.ObjetosConcretos.TableroKlondike;
+import Model.Global.Constants.General;
+import Model.Global.Constants.Klondlike;
+import Model.Global.MainObjects.Abstract.Stock;
+import Model.Global.MainObjects.Abstract.Tableau;
+import Model.Global.MainObjects.Concrete.Foundation;
+import Model.Global.MainObjects.Universal.Card;
+import Model.Global.MainObjects.Universal.Deck;
+import Model.KlondikeSolitaire.KlondikeGame;
+import Model.KlondikeSolitaire.ConcreteObjects.StockKlondike;
+import Model.KlondikeSolitaire.ConcreteObjects.KlondikeTableau;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,66 +21,66 @@ import java.util.Stack;
 import static org.junit.Assert.*;
 
 public class KlondlikeTest {
-    private JuegoKlondike juego;
+    private KlondikeGame juego;
     @Before
     public void setUp() {
-        juego = new JuegoKlondike();
+        juego = new KlondikeGame();
     }
 
 
     @Test
     public void testEstadoInicialJuego() {
         //se testea partida vacia
-        assertEquals(Generales.MAZOVACIO, juego.obtenerCartasTotales());
-        Fundacion f = juego.obtenerFundaciones();
-        for (int i = 0; i < Klondlike.FUNDACIONES; i++) {
-            assertEquals(Generales.FUNDACIONVACIA, f.cantCartas(i));
+        assertEquals(General.EMPTY, juego.countAllCards());
+        Foundation f = juego.getFoundations();
+        for (int i = 0; i < Klondlike.FOUNDATIONS; i++) {
+            assertEquals(General.EMPTY, f.cardsInColumn(i));
         }
-        Tablero t = juego.obtenerTablero();
-        for (int i = 0; i < Klondlike.PILASCARTAS; i++) {
-            assertEquals(Generales.PILAVACIA, t.cantCartas(i));
+        Tableau t = juego.getTableau();
+        for (int i = 0; i < Klondlike.INITIALTABLEAUCOLUMNS; i++) {
+            assertEquals(General.EMPTY, t.cardsInStack(i));
         }
-        Stock s = juego.obtenerStock();
-        assertEquals(Generales.STOCKVACIO, s.cartasTotales());
-        assertTrue(juego.obtenerJuegoTerminado());
-        juego.prepararPartidaAleatoria();
-        assertEquals(Generales.MAZOCOMPLETO, juego.obtenerCartasTotales());
-        assertFalse(juego.obtenerJuegoTerminado());
-        assertFalse(juego.esJuegoGanado());
+        Stock s = juego.getStock();
+        assertEquals(General.EMPTY, s.totalCards());
+        assertTrue(juego.isGameFinished());
+        juego.prepareRandomGame();
+        assertEquals(General.COMPLETEDDECK, juego.countAllCards());
+        assertFalse(juego.isGameFinished());
+        assertFalse(juego.gameFinished());
     }
 
     @Test
     public void testPrepararPartida() {
         //se verifica que las cantidades iniciales esten bien
-        juego.prepararPartidaAleatoria();
-        assertFalse(juego.obtenerJuegoTerminado());
-        Fundacion f = juego.obtenerFundaciones();
-        for (int i = 0; i < Klondlike.FUNDACIONES; i++) {
-            assertEquals(Generales.FUNDACIONVACIA, f.cantCartas(i));
+        juego.prepareRandomGame();
+        assertFalse(juego.isGameFinished());
+        Foundation f = juego.getFoundations();
+        for (int i = 0; i < Klondlike.FOUNDATIONS; i++) {
+            assertEquals(General.EMPTY, f.cardsInColumn(i));
         }
-        Tablero t = juego.obtenerTablero();
-        for (int i = 0; i < Klondlike.PILASCARTAS; i++) {
-            ArrayList<Carta> pila = t.obtenerPilas().get(i);
+        Tableau t = juego.getTableau();
+        for (int i = 0; i < Klondlike.INITIALTABLEAUCOLUMNS; i++) {
+            ArrayList<Card> pila = t.getStacks().get(i);
             assertEquals(i + 1, pila.size());
             for (int j = 0; j < pila.size() - 2; j++) {
-                Carta carta = pila.get(j);
-                assertFalse(carta.esVisible());
+                Card card = pila.get(j);
+                assertFalse(card.isVisible());
             }
-            Carta ultimaCarta = pila.get(i);
-            assertTrue(ultimaCarta.esVisible());
+            Card ultimaCard = pila.get(i);
+            assertTrue(ultimaCard.isVisible());
         }
-        assertEquals(Klondlike.STOCKINICIO, juego.obtenerStock().cartasTotales());
-        assertFalse(juego.obtenerJuegoTerminado());
-        assertFalse(juego.esJuegoGanado());
+        assertEquals(Klondlike.INITIALSTOCK, juego.getStock().totalCards());
+        assertFalse(juego.isGameFinished());
+        assertFalse(juego.gameFinished());
     }
 
 
     @Test
     public void testVolumen(){
-        Fundacion f = juego.obtenerFundaciones();
-        StockKlondike s = juego.obtenerStock();
-        TableroKlondike t = juego.obtenerTablero();
-        Mazo mazo = new Mazo();
+        Foundation f = juego.getFoundations();
+        StockKlondike s = juego.getStock();
+        KlondikeTableau t = juego.getTableau();
+        Deck deck = new Deck();
         Random rnd = new Random(1);
         /*
         Estado inicial de la partida generad.
@@ -109,106 +107,98 @@ public class KlondlikeTest {
         5-[NV-2-TREB, NV-8-DIAM, NV-8-PICA, NV-10-DIAM, NV-3-PICA, V-8-CORA]
         6-[NV-4-PICA, NV-12-CORA, NV-9-PICA, NV-13-TREB, NV-13-CORA, NV-11-TREB, V-5-TREB]
        */
-        juego.prepararPartidaConSemilla(rnd);
-        juego.pasarCartasStock();
-        assertFalse(juego.moverStockAFundacion(0));
-        assertTrue(mazo.verCarta(Palos.CORAZON, Valores.SEIS).sonIguales(s.verPrimerCarta()));
-        assertTrue(s.verPrimerCarta().esVisible());
-        juego.pasarCartasStock();
-        assertTrue(juego.moverStockAFundacion(0));
-        assertTrue(mazo.verCarta(Palos.CORAZON,Valores.SEIS).sonIguales(s.verPrimerCarta()));
-        assertTrue(mazo.verCarta(Palos.TREBOL,Valores.AS).sonIguales(f.verPrimerCartaFundacion(0)));
-        juego.pasarCartasStock();
-        juego.moverStockATablero(6);
-        assertTrue(mazo.verCarta(Palos.DIAMANTE,Valores.CUATRO).sonIguales(t.verCartaPos(6,7)));
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverStockATablero(6);
-        juego.pasarCartasStock();
-        juego.moverStockATablero(0);
-        juego.pasarCartasStock();
-        juego.moverStockATablero(2);
-        juego.pasarCartasStock();
-        juego.moverStockATablero(3);
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverStockATablero(6);
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverFundacionAFundacion(0,3);
-        juego.moverStockAFundacion(2);
-        juego.moverFundacionATablero(3,6);
-        assertFalse(juego.moverTableroAFundacion(6,t.cantCartas(6)-1,2));
-        assertTrue(juego.moverTableroAFundacion(6,t.cantCartas(6)-1,3));
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverStockATablero(0);
-        assertTrue(mazo.verCarta(Palos.CORAZON,Valores.TRES).sonIguales(t.verCartaPos(0,2)));
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverStockATablero(3);
-        juego.moverStockATablero(5);
-        assertTrue(mazo.verCarta(Palos.PICA,Valores.SIETE).sonIguales(t.verCartaPos(5,t.cantCartas(5)-1)));
-        assertTrue(mazo.verCarta(Palos.CORAZON,Valores.SIETE).sonIguales(t.verCartaPos(3,t.cantCartas(3)-1)));
-        juego.pasarCartasStock();
-        juego.moverStockATablero(3);
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        juego.moverStockAFundacion(1);
-        assertTrue(mazo.verCarta(Palos.DIAMANTE,Valores.AS).sonIguales(f.verPrimerCartaFundacion(1)));
-        juego.pasarCartasStock();
-        juego.pasarCartasStock();
-        assertEquals(0,s.obtenerStockNoVisible().size());
-        assertEquals(11,s.obtenerCartasVisibles().size());
-        juego.pasarCartasStock();
-        assertEquals(11,s.obtenerStockNoVisible().size());
-        assertEquals(0,s.obtenerCartasVisibles().size());
-        for (Carta carta:s.obtenerStockNoVisible()){
-            assertFalse(carta.esVisible());
+        juego.prepareGameWithSeed(rnd);
+        juego.moveCardStock();
+        assertFalse(juego.moveStockToFoundation(0));
+        //return this.value == otra.getValue() && suit == otra.getSuit();
+        assertTrue(s.seeFirstCard().isVisible());
+        juego.moveCardStock();
+        assertTrue(juego.moveStockToFoundation(0));
+        juego.moveCardStock();
+        juego.moveStockToTableau(6);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveStockToTableau(6);
+        juego.moveCardStock();
+        juego.moveStockToTableau(0);
+        juego.moveCardStock();
+        juego.moveStockToTableau(2);
+        juego.moveCardStock();
+        juego.moveStockToTableau(3);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveStockToTableau(6);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveBetweenFoundations(0,3);
+        juego.moveStockToFoundation(2);
+        juego.moveFoundationToTableau(3,6);
+        assertFalse(juego.moveTableauToFoundation(6,t.cardsInStack(6)-1,2));
+        assertTrue(juego.moveTableauToFoundation(6,t.cardsInStack(6)-1,3));
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveStockToTableau(0);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveStockToTableau(3);
+        juego.moveStockToTableau(5);
+        juego.moveCardStock();
+        juego.moveStockToTableau(3);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveCardStock();
+        juego.moveStockToFoundation(1);
+        juego.moveCardStock();
+        juego.moveCardStock();
+        assertEquals(0,s.getNonVisibleStock().size());
+        assertEquals(11,s.getVisibleStock().size());
+        juego.moveCardStock();
+        assertEquals(11,s.getNonVisibleStock().size());
+        assertEquals(0,s.getVisibleStock().size());
+        for (Card card :s.getNonVisibleStock()){
+            assertFalse(card.isVisible());
         }
-        juego.pasarCartasStock();
-        juego.moverStockATablero(5);
-        juego.moverTableroATablero(6,6,5);
-        assertTrue(mazo.verCarta(Palos.TREBOL,Valores.JOTA).sonIguales(t.verCartaPos(6,t.cantCartas(6)-1)));
-        assertTrue(t.verCartaPos(6,t.cantCartas(6)-1).esVisible());
-        assertFalse(juego.obtenerJuegoTerminado());
-        assertFalse(juego.esJuegoGanado());
+        juego.moveCardStock();
+        juego.moveStockToTableau(5);
+        juego.moveBetweenTableau(6,6,5);
+        assertTrue(t.seeCard(6,t.cardsInStack(6)-1).isVisible());
+        assertFalse(juego.isGameFinished());
+        assertFalse(juego.gameFinished());
     }
     @Test
     public void testPartidaGanada(){
         //Testeo tener 51 cartas en fundaciones, mover la ultima y que la partida esté ganada.
         //Inicio el estado de la partida.
-        ArrayList<ArrayList<Carta>> tablero = new ArrayList<>();
-        ArrayList<ArrayList<Carta>> fundaciones = new ArrayList<>();
-        ArrayList<Carta> stockVisible = new ArrayList<>();
-        Stack<Carta> stockNovisible= new Stack<>();
-        for (int i=0;i<Klondlike.PILASCARTAS;i++){
+        ArrayList<ArrayList<Card>> tablero = new ArrayList<>();
+        ArrayList<ArrayList<Card>> fundaciones = new ArrayList<>();
+        ArrayList<Card> stockVisible = new ArrayList<>();
+        Stack<Card> stockNovisible= new Stack<>();
+        for (int i = 0; i<Klondlike.INITIALTABLEAUCOLUMNS; i++){
             tablero.add(new ArrayList<>());
         }
-        for (int i=0;i<Klondlike.FUNDACIONES;i++){
+        for (int i = 0; i<Klondlike.FOUNDATIONS; i++){
             fundaciones.add(new ArrayList<>());
         }
-        Mazo mazo = new Mazo();
-        ArrayList<Carta> cartas = mazo.obtenerCartas();
-        ArrayList<Carta> fund;
-        Carta carta;
-        for(int i=0;i<Generales.MAZOCOMPLETO-1;i++){
-            carta = cartas.get(i);
-            carta.hacerVisible();
-            fund = fundaciones.get(i / Generales.CARTASPORPALO);
-            fund.add(cartas.get(i));
+        Deck deck = new Deck();
+        ArrayList<Card> cards = deck.obtenerCartas();
+        ArrayList<Card> fund;
+        Card card;
+        for(int i = 0; i< General.COMPLETEDDECK -1; i++){
+            card = cards.get(i);
+            card.changeVisibility(true);
+            fund = fundaciones.get(i / General.CARDSBYSUIT);
+            fund.add(cards.get(i));
         }
-        carta = cartas.get(Generales.MAZOCOMPLETO-1);
-        carta.hacerVisible();
-        tablero.get(0).add(carta);
+        card = cards.get(General.COMPLETEDDECK -1);
+        card.changeVisibility(true);
+        tablero.get(0).add(card);
         //Preparo la partida con las fundaciones casi completas y una carta en la primer pila.
-        juego.prepararPartidaEspecifica(stockNovisible,stockVisible,fundaciones,tablero);
+        juego.prepareSpecificGame(stockNovisible,stockVisible,fundaciones,tablero);
         //Realizo la validacion.
-        assertFalse(juego.esJuegoGanado());
-        juego.moverTableroAFundacion(0,0,3);
-        assertTrue(juego.esJuegoGanado());
+        assertFalse(juego.gameFinished());
+        juego.moveTableauToFoundation(0,0,3);
+        assertTrue(juego.gameFinished());
     }
 }
