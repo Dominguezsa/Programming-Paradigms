@@ -23,7 +23,7 @@ Throughout the development of this project, we explored several key concepts wit
 ## Images
 
 <p align="center">
-  <img src="Images/Menu.png" alt="Presentation">
+  <img src="Images/Presentation.png" alt="Presentation">
   <br>
   <em>Image of the program presentation.</em>
 </p>
